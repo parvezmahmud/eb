@@ -1,0 +1,43 @@
+{% load static tailwind_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html class="m-0 p-0  scroll-smooth" lang="en">
+	<head>
+        <title>ProWithSwadhin</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+         <link rel="stylesheet" href="{% static 'styles.css' %}">
+         <link rel="shortcut icon" href="{% static 'images/logo.jpg' %}" type="image/x-icon">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Atma:wght@300;400;500;600;700&family=Baloo+Da+2:wght@400..800&family=Hind+Siliguri:wght@300;400;500;600;700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+		{% tailwind_css %}
+	</head>
+
+    <body>
+        <nav class="bg-white shadow-sm py-4 px-6 flex items-center justify-between">
+            <!-- Go Back Button -->
+            <button 
+              onclick="window.history.back()" 
+              class="text-gray-800 hover:text-blue-600 font-medium flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+              <span>Go Back</span>
+            </button>
+          
+            <!-- Optional Right Side Links/Icons -->
+            {% comment %} <div class="flex items-center space-x-4">
+              <a href="{% url 'dashboard-home' %}" class="text-gray-800 hover:text-blue-600 text-sm font-medium">Home</a>
+              <a href="{% url 'b-unit-home' %}" class="text-gray-800 hover:text-blue-600 text-sm font-medium">B-unit</a>
+              <a href="{% url 'c-unit-home' %}" class="text-gray-800 hover:text-blue-600 text-sm font-medium">C-unit</a>
+              <a href="{% url 'dashboard-students-home' %}" class="text-gray-800 hover:text-blue-600 text-sm font-medium">Students</a>
+            </div> {% endcomment %}
+          </nav>
+          
+        {% block body %}
+        {% endblock %}
+          
+    </body>
+</html>

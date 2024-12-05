@@ -1,0 +1,67 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block body %}
+<div class="p-6">
+    <div class="container mx-auto">
+        <div class="text-center mb-8 p-6 bg-white rounded-lg shadow-md">
+            <h1 class="text-3xl font-bold">Create Exam</h1>
+            <h2 class="text-xl mt-4">Create Questions for: <span class="font-bold">{{ title }}</span></h2>
+            <div class="mt-4 grid grid-cols-4 gap-4">
+                <h3 class="text-lg"><strong>Total Questions:</strong> {{ num_of_ques }}</h3>
+                <h3 class="text-lg"><strong>Total Marks:</strong> {{ marks }}</h3>
+                <h3 class="text-lg"><strong>Time:</strong> {{ time }} minutes</h3>
+            </div>
+        </div>
+        <div class="flex justify-center">
+            <div class="w-full max-w-5xl bg-white p-6 rounded-lg shadow-md">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ formset.management_form }}
+                    {% for form in formset %}
+                        <div class="mb-6 border-b pb-4">
+                            <h3 class="text-lg font-bold mb-2">Question {{ forloop.counter }} of {{ num_of_ques }}</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="col-span-2 mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">{{ form.question_text.label_tag }}</label>
+                                    <div class="mt-1">{{ form.question_text }}</div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">{{ form.option1.label_tag }}</label>
+                                    <div class="flex items-center mt-1">
+                                        {{ form.option1 }} 
+                                        <label class="ml-2">{{ form.option1_is_correct }} {{ form.option1_is_correct.label_tag }}</label>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">{{ form.option2.label_tag }}</label>
+                                    <div class="flex items-center mt-1">
+                                        {{ form.option2 }} 
+                                        <label class="ml-2">{{ form.option2_is_correct }} {{ form.option2_is_correct.label_tag }}</label>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">{{ form.option3.label_tag }}</label>
+                                    <div class="flex items-center mt-1">
+                                        {{ form.option3 }} 
+                                        <label class="ml-2">{{ form.option3_is_correct }} {{ form.option3_is_correct.label_tag }}</label>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">{{ form.option4.label_tag }}</label>
+                                    <div class="flex items-center mt-1">
+                                        {{ form.option4 }} 
+                                        <label class="ml-2">{{ form.option4_is_correct }} {{ form.option4_is_correct.label_tag }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button class="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75" type="submit">Save Questions</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

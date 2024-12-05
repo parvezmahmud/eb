@@ -1,0 +1,80 @@
+{% load static tailwind_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html class="m-0 p-0  scroll-smooth" lang="en">
+	<head>
+        <title>ProWithSwadhin</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+         <link rel="stylesheet" href="{% static 'styles.css' %}">
+         <link rel="shortcut icon" href="https://prowithswadhin.com/wp-content/uploads/2024/09/WhatsApp_Image_2024-09-15_at_21.30.09_e49e5a57-removebg-preview-e1726414551173-170x86.png" type="image/x-icon">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Atma:wght@300;400;500;600;700&family=Baloo+Da+2:wght@400..800&family=Hind+Siliguri:wght@300;400;500;600;700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+		{% tailwind_css %}
+	</head>
+
+    <body>
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 mb-5">
+      <div class="flex justify-between items-center py-4">
+        <!-- Logo -->
+        <div class="text-2xl font-bold text-gray-800">
+            <a href="{% url 'students-home' %}">
+          <img class="w-auto h-8" src="https://prowithswadhin.com/wp-content/uploads/2024/09/WhatsApp_Image_2024-09-15_at_21.30.09_e49e5a57-removebg-preview-e1726414551173-170x86.png" alt="logo">
+        </a>
+        </div>
+
+        <!-- Menu Items (Hidden on Mobile) -->
+        {% comment %} <div class="hidden md:flex space-x-8">
+          <a href="{% url 'students-home' %}" class="text-gray-600 hover:text-blue-500 font-semibold">Home</a>
+          <a href="{% url 'student-bunit' %}" class="text-gray-600 hover:text-blue-500 font-semibold">B-UNIT</a>
+          <a href="{% url 'student-cunit' %}" class="text-gray-600 hover:text-blue-500 font-semibold">C-UNIT</a>
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="text-gray-600 hover:text-blue-500 font-semibold">Profile</a>
+            <a href="{% url 'logout' %}" class="text-gray-600 hover:text-blue-500 font-semibold">Logout</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="text-gray-600 hover:text-blue-500 font-semibold">Login</a>
+          {% endif %}
+        </div> {% endcomment %}
+
+        <!-- Hamburger Menu (Mobile) -->
+        <div class="md:hidden">
+          <button id="menu-btn" class="text-gray-600 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5h16.5M3.75 12h16.5M3.75 16.5h16.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu (Hidden by Default) -->
+    {% comment %} <div id="mobile-menu" class="hidden md:hidden mb-3">
+      <a href="{% url 'students-home' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">Home</a>
+      <a href="{% url 'student-bunit' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">B-UNIT</a>
+      <a href="{% url 'student-cunit' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">C-UNIT</a>
+      {% if request.user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">Profile</a>
+            <a href="{% url 'logout' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">Logout</a>
+      {% else %}
+            <a href="{% url 'login' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">Login</a>
+      {% endif %}
+    </div> {% endcomment %}
+  </nav>
+
+  <script>
+    // JavaScript to toggle the mobile menu
+    document.getElementById('menu-btn').addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+  </script>
+
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>
