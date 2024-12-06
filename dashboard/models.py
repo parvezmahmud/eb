@@ -4,14 +4,14 @@ from django.contrib.auth.models import User
 
 class Question(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    question_text = models.CharField(max_length=255)
-    option1 = models.CharField(max_length=255)
+    question_text = models.CharField(max_length=255, blank=True, null=True)
+    option1 = models.CharField(max_length=255, blank=True, null=True)
     option1_is_correct = models.BooleanField(default=False)
-    option2 = models.CharField(max_length=255)
+    option2 = models.CharField(max_length=255, blank=True, null=True)
     option2_is_correct = models.BooleanField(default=False)
-    option3 = models.CharField(max_length=255)
+    option3 = models.CharField(max_length=255, blank=True, null=True)
     option3_is_correct = models.BooleanField(default=False)
-    option4 = models.CharField(max_length=255)
+    option4 = models.CharField(max_length=255, blank=True, null=True)
     option4_is_correct = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)  # Field to maintain order
     

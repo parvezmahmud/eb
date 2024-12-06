@@ -194,7 +194,6 @@ class DashboardHomeViewTest(TestCase):
             [
                 ('B-UNIT', 'b-unit-home'),
                 ('C-UNIT', 'c-unit-home'),
-                ('STUDENTS', 'students-home')
             ]
         )
 
@@ -243,7 +242,7 @@ class DashboardBUnitViewTest(TestCase):
         self.assertIn('exams', response.context)
         self.assertEqual(list(response.context['exams']), [self.exam2, self.exam1])
         self.assertEqual(response.context['create_card'], 'card-bunit')
-        self.assertEqual(response.context['create_question'], 'create-question-bunit')
+        self.assertEqual(response.context['create_question'], 'create-exam-bunit')
         self.assertEqual(response.context['edit_test'], 'edit-test-bunit')
         self.assertEqual(response.context['topic'], 'B-UNIT')
 
@@ -292,7 +291,7 @@ class DashboardCUnitViewTest(TestCase):
         self.assertIn('exams', response.context)
         self.assertEqual(list(response.context['exams']), [self.exam2, self.exam1])
         self.assertEqual(response.context['create_card'], 'card-cunit')
-        self.assertEqual(response.context['create_question'], 'create-question-cunit')
+        self.assertEqual(response.context['create_question'], 'create-exam-cunit')
         self.assertEqual(response.context['edit_test'], 'edit-test-cunit')
         self.assertEqual(response.context['topic'], 'C-UNIT')
 
@@ -348,60 +347,6 @@ class CreateExamBUnitViewTest(TestCase):
         self.assertFalse(response.context['form'].is_valid())
 
 
-
-# class CreateQuestionsBUnitViewTest(TestCase):
-#     def setUp(self):
-#         self.client = Client()
-#         self.url = reverse('create-question-bunit')  # Update with the correct URL name
-
-#         # Set up session data
-#         session = self.client.session
-#         session['title'] = 'Sample Exam'
-#         session['number_of_questions'] = 5
-#         session['marks'] = 100
-#         session['time'] = 60
-#         session.save()
-
-#     def test_create_questions_bunit_view_get(self):
-#         # Test GET request to render the formset
-#         response = self.client.get(self.url)
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, 'dashboard/question/create-question.html')
-#         self.assertIn('formset', response.context)
-#         self.assertEqual(len(response.context['formset']), 5)  # Ensure 5 formsets are generated (based on the session)
-
-#     def test_create_questions_bunit_view_post_valid_data(self):
-#         # Prepare valid POST data
-#         valid_data = {
-#             'form-0-question_text': 'Question 1',
-#             'form-0-option1': 'Option 1',
-#             'form-0-option1_is_correct': 'on',
-#             'form-0-option2': 'Option 2',
-#             'form-0-option2_is_correct': '',
-#             'form-1-question_text': 'Question 2',
-#             'form-1-option1': 'Option 1',
-#             'form-1-option1_is_correct': 'on',
-#             'form-1-option2': 'Option 2',
-#             'form-1-option2_is_correct': '',
-#             # Add form data for other forms (total of 5 based on the session)
-#         }
-
-#         response = self.client.post(self.url, data=valid_data)
-
-#         # Check if EXAM_BATCH_BUNIT and Questions were created
-#         self.assertEqual(response.status_code, 302)  # Should redirect
-#         self.assertRedirects(response, reverse('b-unit-home'))
-
-#         # Check that the exam was created
-#         exam = EXAM_BATCH_BUNIT.objects.first()
-#         self.assertEqual(exam.title, 'Sample Exam')
-#         self.assertEqual(exam.number_of_questions, 5)
-#         self.assertEqual(exam.marks, 100)
-#         self.assertEqual(exam.time, 60)
-
-#         # Check if questions were added to the exam
-#         self.assertEqual(exam.questions.count(), 5)
-
 print('Running Test For Create Questions B-Unit')
 class CreateQuestionsBUnitViewTest(TestCase):
     def setUp(self):
@@ -434,3 +379,55 @@ class CreateQuestionsBUnitViewTest(TestCase):
         # Assert redirect after valid form submission
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('b-unit-home'))
+
+
+print("Running test for Create Exam C Unit")
+class CreateExamCUnitViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.url = reverse('create-exam-cunit')  # Update with the correct URL name for the view
+
+    def test_create_exam_bunit_view_get(self):
+        # Test GET request to render the form
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'dashboard/question/create-exam.html')
+        self.assertIn('form', response.context)
+        self.assertIsInstance(response.context['form'], CREATE_TEST)
+
+    def test_create_exam_bunit_view_post_valid_data(self):
+        # Test POST request with valid data
+        valid_data = {
+            'title': 'Sample Exam',
+            'number_of_questions': 10,
+            'marks': 100,
+            'time': 60,
+        }
+        response = self.client.post(self.url, data=valid_data)
+        # Check that the user is redirected
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('create-question-cunit'))  # Update with the actual URL name
+
+        # Check session data
+        session = self.client.session
+        self.assertEqual(session['title'], 'Sample Exam')
+        self.assertEqual(session['number_of_questions'], 10)
+        self.assertEqual(session['marks'], 100)
+        self.assertEqual(session['time'], 60)
+
+    def test_create_exam_bunit_view_post_invalid_data(self):
+        # Test POST request with invalid data
+        invalid_data = {
+            'title': '',  # Missing title
+            'number_of_questions': -5,  # Invalid number of questions
+            'marks': 'not_a_number',  # Invalid marks
+            'time': -30,  # Invalid time
+        }
+        response = self.client.post(self.url, data=invalid_data)
+        self.assertEqual(response.status_code, 200)  # Should render the form again
+        self.assertTemplateUsed(response, 'dashboard/question/create-exam.html')
+        self.assertIn('form', response.context)
+        self.assertIn('invalid_data', response.context)
+        self.assertEqual(response.context['invalid_data'], "Data is not valid")
+        self.assertIsInstance(response.context['form'], CREATE_TEST)
+        self.assertFalse(response.context['form'].is_valid())

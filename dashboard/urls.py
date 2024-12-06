@@ -7,4 +7,6 @@ urlpatterns = [
     path('dashboard/c-unit', views.cunit, name='c-unit-home'),
     path('dashboard/b-unit/create-test', views.create_exam_bunit, name="create-exam-bunit"),
     path('dashboard/b-unit/create-test/create-question', views.create_questions_bunit, name="create-question-bunit"),
+    path('dashboard/c-unit/create-test', views.create_exam_cunit, name="create-exam-cunit"),
+    path('dashboard/c-unit/create-test/create-question', views.create_questions_cunit, name="create-question-cunit"),
 ]
