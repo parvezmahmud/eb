@@ -1,5 +1,5 @@
 from django import forms
-from .models import Question
+from .models import Question, UserAnswer
 
 class CREATE_TEST(forms.Form):
     title = forms.CharField(label="Name of the Exam", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
@@ -76,3 +76,24 @@ class CARD_FORM(forms.Form):
     title = forms.CharField(label="Class Name", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
     drive_link = forms.CharField(label="PDF File Link", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
     take_exam = forms.CharField(label="Exam Link", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
+
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = UserAnswer
+        fields = ['selected_option']
+
+    def __init__(self, *args, **kwargs):
+        question = kwargs.pop('question', None)
+        super(AnswerForm, self).__init__(*args, **kwargs)
+        if question:
+            self.fields['selected_option'] = forms.ChoiceField(
+                choices=[
+                    (question.option1, question.option1),
+                    (question.option2, question.option2),
+                    (question.option3, question.option3),
+                    (question.option4, question.option4),
+                ],
+                widget=forms.RadioSelect(attrs={'class': 'h-4 w-4'})
+            )
+            self.fields['selected_option'].label = question.question_text

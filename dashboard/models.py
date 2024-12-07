@@ -77,7 +77,6 @@ class UserAnswer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     selected_option = models.CharField(null=True, blank=True, max_length=255)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def is_correct(self):
         if self.selected_option == self.question.option1 and self.question.option1_is_correct:

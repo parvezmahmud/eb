@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
-from dashboard.models import EXAM_BATCH_BUNIT, EXAM_BATCH_CARDS_BUNIT, EXAM_BATCH_CUNIT, EXAM_BATCH_CARDS_CUNIT
-from .forms import CARD_FORM, CREATE_TEST, QuestionForm
+from dashboard.models import EXAM_BATCH_BUNIT, EXAM_BATCH_CARDS_BUNIT, EXAM_BATCH_CUNIT, EXAM_BATCH_CARDS_CUNIT, UserAnswer
+from .forms import CARD_FORM, CREATE_TEST, QuestionForm, AnswerForm
 from django.forms import formset_factory, modelformset_factory
+import uuid
+from django import forms
 
 
 
@@ -210,3 +212,64 @@ def create_questions_cunit(request):
         'formset': formset,
     }
     return render(request, 'dashboard/question/create-question.html', context)
+
+def ind_exam(request, id):
+    try:
+        data = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
+        context = {
+            'exam': data
+        }
+        return render(request, 'dashboard/question/ind.html', context)
+    except:
+        data = get_object_or_404(EXAM_BATCH_CUNIT, id=id)
+        context = {
+            'exam': data
+        }
+        return render(request, 'dashboard/question/ind.html', context)
+    
+
+
+def take_exam(request, id):
+    try:
+        exam = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
+    except:
+        exam = get_object_or_404(EXAM_BATCH_CUNIT, id=id)
+    questions = exam.questions.all()
+    AnswerFormSet = modelformset_factory(UserAnswer, form=AnswerForm, extra=len(questions))
+
+    if request.method == 'POST':
+        formset = AnswerFormSet(request.POST, queryset=UserAnswer.objects.none())
+        if formset.is_valid():
+            attempt_id = uuid.uuid4().hex
+            request.session['attempt_id'] = attempt_id
+            answers = []
+            total_selected = 0
+            for form, question in zip(formset.forms, questions):
+                try:
+                    form.cleaned_data['selected_option']
+                    selected = form.cleaned_data['selected_option']
+                    total_selected += 1
+                except KeyError:
+                    selected = "No choice was selected"
+                user_answer = UserAnswer(
+                        question=question,
+                        selected_option=selected,
+                    )
+                answers.append(user_answer)
+                request.session[f'{attempt_id}_{question.id}'] = selected
+            request.session['total_selected'] = total_selected
+        return redirect('dashboard-home')
+    else:
+        formset = AnswerFormSet(queryset=UserAnswer.objects.none())
+        for form, question in zip(formset.forms, questions):
+            form.fields['selected_option'].widget = forms.RadioSelect(
+                choices=[
+                    (question.option1, question.option1),
+                    (question.option2, question.option2),
+                    (question.option3, question.option3),
+                    (question.option4, question.option4),
+                ]
+            )
+            form.fields['selected_option'].label = question.question_text
+
+    return render(request, 'dashboard/question/take-exam.html', {'exam': exam, 'formset': formset, 'exam_duration': exam.time })

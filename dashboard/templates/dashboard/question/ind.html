@@ -1,0 +1,40 @@
+{% extends 'student/base.html' %}
+{% block body %}
+<body class="bg-gray-100 p-8">
+
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ exam.title }}</h2>
+
+      <!-- Number of Questions -->
+      <div class="flex items-center text-gray-600 mb-3">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h6" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18v-6h-6" />
+          <circle cx="12" cy="12" r="9" />
+        </svg>
+        <span class="text-lg">{{ exam.number_of_questions }} Questions</span>
+      </div>
+
+      <!-- Time Duration -->
+      <div class="flex items-center text-gray-600 mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-500 mr-2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3" />
+          <circle cx="12" cy="12" r="9" />
+        </svg>
+        <span class="text-lg">{{ exam.time }} Minutes</span>
+      </div>
+
+      <!-- Take Exam Button -->
+       <a href="{% url 'take-exam' exam.id %}">
+        <button class="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-300 text-lg font-semibold">
+            Take Exam
+          </button>
+       </a>
+      
+    </div>
+  </div>
+
+</body>
+
+{% endblock %}
