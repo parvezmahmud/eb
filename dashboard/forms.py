@@ -40,6 +40,36 @@ class QuestionForm(forms.ModelForm):
             'option4': forms.TextInput(attrs={'class': 'form-input mt-1 block w-full'}),
             'option4_is_correct': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
         }
+        def clean_option1(self):
+            """Handle empty string for option1"""
+            data = self.cleaned_data.get('option1')
+            return data if data.strip() else None
+
+        def clean_option2(self):
+            """Handle empty string for option2"""
+            data = self.cleaned_data.get('option2')
+            return data if data.strip() else None
+
+        def clean_option3(self):
+            """Handle empty string for option3"""
+            data = self.cleaned_data.get('option3')
+            return data if data.strip() else None
+
+        def clean_option4(self):
+            """Handle empty string for option4"""
+            data = self.cleaned_data.get('option4')
+            return data if data.strip() else None
+
+        def clean(self):
+            """Custom validation for the entire form."""
+            cleaned_data = super().clean()
+
+            # Ensure all `option` fields with blank values are stored as None
+            for field in ['option1', 'option2', 'option3', 'option4']:
+                if not cleaned_data.get(field):
+                    cleaned_data[field] = None
+
+            return cleaned_data
 
 
 class CARD_FORM(forms.Form):
