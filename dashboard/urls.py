@@ -11,4 +11,5 @@ urlpatterns = [
     path('dashboard/c-unit/create-test/create-question', views.create_questions_cunit, name="create-question-cunit"),
     path('exam/<str:id>/', views.ind_exam, name='ind-exam'),
     path('exam/<str:id>/take-exam', views.take_exam, name='take-exam'),
+    path('exam/<str:id>/edit', views.edit_test_and_questions, name="edit-test"),
 ]

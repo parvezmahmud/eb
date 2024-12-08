@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
-from dashboard.models import EXAM_BATCH_BUNIT, EXAM_BATCH_CARDS_BUNIT, EXAM_BATCH_CUNIT, EXAM_BATCH_CARDS_CUNIT, UserAnswer
+from dashboard.models import EXAM_BATCH_BUNIT, EXAM_BATCH_CARDS_BUNIT,Question, EXAM_BATCH_CUNIT, EXAM_BATCH_CARDS_CUNIT, UserAnswer
 from .forms import CARD_FORM, CREATE_TEST, QuestionForm, AnswerForm
 from django.forms import formset_factory, modelformset_factory
 import uuid
 from django import forms
+from django.db import transaction
 
 
 
@@ -273,3 +274,76 @@ def take_exam(request, id):
             form.fields['selected_option'].label = question.question_text
 
     return render(request, 'dashboard/question/take-exam.html', {'exam': exam, 'formset': formset, 'exam_duration': exam.time })
+
+
+
+def edit_test_and_questions(request, id):
+    try:
+        test = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
+    except:
+        test = get_object_or_404(EXAM_BATCH_CUNIT, id=id)
+
+    if request.method == 'POST':
+        test_form = CREATE_TEST(request.POST)
+    else:
+        initial_data = {
+            'title': test.title,
+            'number_of_questions': test.number_of_questions,
+            'marks': test.marks,
+            'time': test.time,
+        }
+        test_form = CREATE_TEST(initial=initial_data)
+
+    # Add the `order` field to manage the order of questions.
+    QuestionFormSet = modelformset_factory(
+        Question, 
+        form=QuestionForm, 
+        extra=0, 
+        can_delete=True,
+        fields=['question_text', 'option1', 'option1_is_correct', 
+                'option2', 'option2_is_correct', 'option3', 
+                'option3_is_correct', 'option4', 'option4_is_correct']
+    )
+
+    formset = QuestionFormSet(request.POST or None, queryset=test.questions.all())
+
+    if request.method == 'POST':
+        if test_form.is_valid() and formset.is_valid():
+            with transaction.atomic():
+                # Save test details
+                test.title = test_form.cleaned_data['title']
+                test.number_of_questions = test_form.cleaned_data['number_of_questions']
+                test.marks = test_form.cleaned_data['marks']
+                test.time = test_form.cleaned_data['time']
+                test.save()
+
+                # Collect valid instances and retain their original order
+                instances = formset.save(commit=False)
+                form_order_mapping = {form.instance.id: idx for idx, form in enumerate(formset.forms) if form.instance.id}
+
+                # Save questions and assign the correct order
+                for instance in instances:
+                    instance.test = test  # Ensure the question is associated with the correct test
+                    instance.order = form_order_mapping.get(instance.id, instance.order)  # Retain the submitted order
+                    instance.save()
+
+                # Handle deleted objects
+                for obj in formset.deleted_objects:
+                    obj.delete()
+
+                # Redirect based on the unit
+                if test.unit == 'B-UNIT':
+                    return redirect('b-unit-home')
+                else:
+                    return redirect('c-unit-home')
+
+
+
+    context = {
+        'test_form': test_form,
+        'formset': formset,
+        'test': test,
+        'num_of_ques': test.number_of_questions
+    }
+
+    return render(request, 'dashboard/question/edit-test.html', context)
