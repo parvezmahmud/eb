@@ -347,3 +347,17 @@ def edit_test_and_questions(request, id):
     }
 
     return render(request, 'dashboard/question/edit-test.html', context)
+
+
+def delete_question(request, id):
+    if request.method == 'POST':
+        try:
+            obj = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
+            obj.delete()
+            return redirect('b-unit-home')
+        except:
+            obj = get_object_or_404(EXAM_BATCH_CUNIT, id=id)
+            obj.delete()
+            return redirect('c-unit-home')
+    else:
+        return redirect('dashboard-home')
