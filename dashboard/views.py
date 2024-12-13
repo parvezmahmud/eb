@@ -6,6 +6,7 @@ from django.forms import formset_factory, modelformset_factory
 import uuid
 from django import forms
 from django.db import transaction
+from student.models import STUDENTINFO
 
 
 
@@ -16,8 +17,8 @@ def home(request):
     else:
         return redirect('students-home')
 def dashboard_home(request):
-    unit = ['B-UNIT', 'C-UNIT']
-    redirect_links = ['b-unit-home', 'c-unit-home']
+    unit = ['B-UNIT', 'C-UNIT', 'STUDENTS']
+    redirect_links = ['b-unit-home', 'c-unit-home', 'dashboard-students-home']
     context = {
         'units': list(zip(unit, redirect_links))
     }
@@ -361,3 +362,54 @@ def delete_question(request, id):
             return redirect('c-unit-home')
     else:
         return redirect('dashboard-home')
+    
+
+def students_home(request):
+    choices = ['APPROVED', 'PENDING', 'ARCHIVE']
+    redirect_links = ['students-approved', 'students-pending', 'students-archive']
+    context = {
+        'units': list(zip(choices, redirect_links))
+    }
+    return render(request, 'dashboard/dashboard_home.html', context)
+
+
+def students_approved(request):
+    data = STUDENTINFO.objects.filter(is_approved=True).filter(cancelled=False)
+    context = {
+        'students': data
+    }
+    return render(request, 'dashboard/student.html', context)  
+
+def students_unapproved(request):
+    data = STUDENTINFO.objects.filter(is_approved=False).filter(cancelled=False)
+    context = {
+        'students': data
+    }
+    return render(request, 'dashboard/student.html', context)
+
+def students_cancelled(request):
+    data = STUDENTINFO.objects.filter(is_approved=False).filter(cancelled=True)
+    context = {
+        'students': data
+    }
+    return render(request, 'dashboard/student.html', context)
+
+def exam_batch_approve(request, id):
+    try:
+        student = get_object_or_404(STUDENTINFO, id=id)
+        student.is_approved = True
+        student.cancelled = False
+        student.save()
+        return redirect(request.META.get('HTTP_REFERER'))
+    except:
+        return redirect('students-pending')
+    
+def exam_batch_delete(request, id):
+    try:
+        student = get_object_or_404(STUDENTINFO, id=id)
+        student.cancelled = True
+        student.is_approved = False
+        student.save()
+        return redirect(request.META.get('HTTP_REFERER'))
+    except:
+        return redirect(request.META.get('HTTP_REFERER'))

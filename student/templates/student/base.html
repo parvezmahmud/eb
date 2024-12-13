@@ -29,17 +29,17 @@
         </div>
 
         <!-- Menu Items (Hidden on Mobile) -->
-        {% comment %} <div class="hidden md:flex space-x-8">
+ <div class="hidden md:flex space-x-8">
           <a href="{% url 'students-home' %}" class="text-gray-600 hover:text-blue-500 font-semibold">Home</a>
-          <a href="{% url 'student-bunit' %}" class="text-gray-600 hover:text-blue-500 font-semibold">B-UNIT</a>
-          <a href="{% url 'student-cunit' %}" class="text-gray-600 hover:text-blue-500 font-semibold">C-UNIT</a>
+          {% comment %} <a href="{% url 'student-bunit' %}" class="text-gray-600 hover:text-blue-500 font-semibold">B-UNIT</a>
+          <a href="{% url 'student-cunit' %}" class="text-gray-600 hover:text-blue-500 font-semibold">C-UNIT</a> {% endcomment %}
           {% if request.user.is_authenticated %}
             <a href="{% url 'profile' %}" class="text-gray-600 hover:text-blue-500 font-semibold">Profile</a>
             <a href="{% url 'logout' %}" class="text-gray-600 hover:text-blue-500 font-semibold">Logout</a>
           {% else %}
             <a href="{% url 'login' %}" class="text-gray-600 hover:text-blue-500 font-semibold">Login</a>
           {% endif %}
-        </div> {% endcomment %}
+        </div>
 
         <!-- Hamburger Menu (Mobile) -->
         <div class="md:hidden">
@@ -53,17 +53,17 @@
     </div>
 
     <!-- Mobile Menu (Hidden by Default) -->
-    {% comment %} <div id="mobile-menu" class="hidden md:hidden mb-3">
+     <div id="mobile-menu" class="hidden md:hidden mb-3">
       <a href="{% url 'students-home' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">Home</a>
-      <a href="{% url 'student-bunit' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">B-UNIT</a>
-      <a href="{% url 'student-cunit' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">C-UNIT</a>
+      {% comment %} <a href="{% url 'student-bunit' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">B-UNIT</a>
+      <a href="{% url 'student-cunit' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">C-UNIT</a> {% endcomment %}
       {% if request.user.is_authenticated %}
             <a href="{% url 'profile' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">Profile</a>
             <a href="{% url 'logout' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">Logout</a>
       {% else %}
             <a href="{% url 'login' %}" class="block text-gray-600 hover:text-blue-500 py-2 px-4 font-semibold">Login</a>
       {% endif %}
-    </div> {% endcomment %}
+    </div>
   </nav>
 
   <script>
