@@ -11,6 +11,7 @@ urlpatterns = [
     path('dashboard/c-unit/create-test/create-question', views.create_questions_cunit, name="create-question-cunit"),
     path('exam/<str:id>/', views.ind_exam, name='ind-exam'),
     path('exam/<str:id>/take-exam', views.take_exam, name='take-exam'),
+    path('exam/<str:id>/result', views.result, name='exam-result'),
     path('exam/<str:id>/edit', views.edit_test_and_questions, name="edit-test"),
     path('exam/<str:id>/delete', views.delete_question, name='delete-test'),
     path('dashboard/students', views.students_home, name='dashboard-students-home'),
@@ -19,4 +20,6 @@ urlpatterns = [
     path('dashboard/students/archive', views.students_cancelled, name='students-archive'),
     path('dashboard/students/pending/<str:id>/', views.exam_batch_approve, name='exam-batch-students-allow'),
     path('dashboard/students/delete/<str:id>/', views.exam_batch_delete, name='exam-batch-students-delete'),
+    path('dashboard/b-unit/create-card', views.create_card_bunit, name='create-card-bunit'),
+    path('dashboard/c-unit/create-card', views.create_card_cunit, name='create-card-cunit'),
 ]

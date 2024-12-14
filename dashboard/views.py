@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
-from dashboard.models import EXAM_BATCH_BUNIT, EXAM_BATCH_CARDS_BUNIT,Question, EXAM_BATCH_CUNIT, EXAM_BATCH_CARDS_CUNIT, UserAnswer
+from dashboard.models import EXAM_BATCH_BUNIT, EXAM_BATCH_CARDS_BUNIT,Question, EXAM_BATCH_CUNIT, EXAM_BATCH_CARDS_CUNIT, UserAnswer, BUNITSCORESHEET, CUNITSCORESHEET
 from .forms import CARD_FORM, CREATE_TEST, QuestionForm, AnswerForm
 from django.forms import formset_factory, modelformset_factory
 import uuid
@@ -27,7 +27,7 @@ def dashboard_home(request):
 def bunit(request):
     cards = EXAM_BATCH_CARDS_BUNIT.objects.all().order_by('-created')
     exams = EXAM_BATCH_BUNIT.objects.all().order_by('-created')
-    create_card = 'card-bunit'
+    create_card = 'create-card-bunit'
     create_question = 'create-exam-bunit'
     edit_question = 'edit-test-bunit'
     context = {
@@ -43,7 +43,7 @@ def bunit(request):
 def cunit(request):
     cards = EXAM_BATCH_CARDS_CUNIT.objects.all().order_by('-created')
     exams = EXAM_BATCH_CUNIT.objects.all().order_by('-created')
-    create_card = 'card-cunit'
+    create_card = 'create-card-cunit'
     create_question = 'create-exam-cunit'
     edit_question = 'edit-test-cunit'
     context = {
@@ -260,7 +260,7 @@ def take_exam(request, id):
                 answers.append(user_answer)
                 request.session[f'{attempt_id}_{question.id}'] = selected
             request.session['total_selected'] = total_selected
-        return redirect('dashboard-home')
+        return redirect('exam-result', id=id)
     else:
         formset = AnswerFormSet(queryset=UserAnswer.objects.none())
         for form, question in zip(formset.forms, questions):
@@ -275,6 +275,81 @@ def take_exam(request, id):
             form.fields['selected_option'].label = question.question_text
 
     return render(request, 'dashboard/question/take-exam.html', {'exam': exam, 'formset': formset, 'exam_duration': exam.time })
+
+
+def result(request, id):
+        
+        try:
+            exam = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
+            user = request.user
+            attempt_id = request.session.get('attempt_id')
+            if not attempt_id:
+                return redirect('take_exam', exam=id)
+            user_answers = []
+            questions = exam.questions.all()
+            total_selected: int = request.session.get('total_selected')
+            for question in questions:
+                selected_option = request.session.get(f'{attempt_id}_{question.id}')
+                if selected_option:
+                    user_answer = UserAnswer(
+                        question=question,
+                        selected_option=selected_option
+                    )
+                    user_answers.append(user_answer)
+                else:
+                    pass
+            score = sum(1 for answer in user_answers if answer.is_correct())
+            wrong_ans = total_selected - score
+            neg_score = wrong_ans * .25
+            if score - neg_score > 0:
+                final_score = score - neg_score
+            else:
+                final_score = 0
+            if BUNITSCORESHEET.objects.filter(user=user, exam=exam).count() > 0:
+                return render(request, 'dashboard/question/result.html', {'exam': exam, 'user_answers': user_answers, 'score': score, 'final_score': final_score, 'selected': total_selected, 'wrong': wrong_ans})
+            else:
+                BUNITSCORESHEET.objects.create(
+                    user=user,
+                    exam=exam,
+                    score=final_score
+                )
+                return render(request, 'dashboard/question/result.html', {'exam': exam, 'user_answers': user_answers, 'score': score, 'final_score': final_score, 'selected': total_selected, 'wrong': wrong_ans})
+        except:
+            exam = get_object_or_404(EXAM_BATCH_CUNIT, id=id)
+            user = request.user
+            attempt_id = request.session.get('attempt_id')
+            if not attempt_id:
+                return redirect('take_exam', exam=id)
+            user_answers = []
+            questions = exam.questions.all()
+            total_selected: int = request.session.get('total_selected')
+            for question in questions:
+                selected_option = request.session.get(f'{attempt_id}_{question.id}')
+                if selected_option:
+                    user_answer = UserAnswer(
+                        question=question,
+                        selected_option=selected_option
+                    )
+                    user_answers.append(user_answer)
+                else:
+                    pass
+            score = sum(1 for answer in user_answers if answer.is_correct())
+            wrong_ans = total_selected - score
+            neg_score = wrong_ans * .25
+            if score - neg_score > 0:
+                final_score = score - neg_score
+            else:
+                final_score = 0
+            if CUNITSCORESHEET.objects.filter(user=user, exam=exam).count() > 0:
+                return render(request, 'dashboard/question/result.html', {'exam': exam, 'user_answers': user_answers, 'score': score, 'final_score': final_score, 'selected': total_selected, 'wrong': wrong_ans})
+            else:
+                CUNITSCORESHEET.objects.create(
+                    user=user,
+                    exam=exam,
+                    score=final_score
+                )
+                return render(request, 'dashboard/question/result.html', {'exam': exam, 'user_answers': user_answers, 'score': score, 'final_score': final_score, 'selected': total_selected, 'wrong': wrong_ans})
+        
 
 
 
@@ -413,3 +488,58 @@ def exam_batch_delete(request, id):
         return redirect(request.META.get('HTTP_REFERER'))
     except:
         return redirect(request.META.get('HTTP_REFERER'))
+    
+
+def create_card_bunit(request):
+    try:
+        form = CARD_FORM()
+        if request.method == 'POST':
+            posted_card = CARD_FORM(request.POST)
+            if posted_card.is_valid():
+                EXAM_BATCH_CARDS_BUNIT.objects.create(
+                    title = posted_card.cleaned_data['title'],
+                    take_exam = posted_card.cleaned_data['take_exam'],
+                    drive_link = posted_card.cleaned_data['drive_link']
+                )
+                return redirect('b-unit-home')
+            else:
+                error = "Invalid Form Input"
+                context = {
+                    'form': form,
+                    'error': error
+                }
+                return render(request, 'dashboard/question/create-exam.html', context)
+        else:
+            context = {
+                'form': form
+            }
+            return render(request, 'dashboard/question/create-exam.html', context)
+    except:
+        return render(request, 'dashboard/question/create-exam.html', context)
+    
+def create_card_cunit(request):
+    try:
+        form = CARD_FORM()
+        if request.method == 'POST':
+            posted_card = CARD_FORM(request.POST)
+            if posted_card.is_valid():
+                EXAM_BATCH_CARDS_CUNIT.objects.create(
+                    title = posted_card.cleaned_data['title'],
+                    take_exam = posted_card.cleaned_data['take_exam'],
+                    drive_link = posted_card.cleaned_data['drive_link']
+                )
+                return redirect('c-unit-home')
+            else:
+                error = "Invalid Form Input"
+                context = {
+                    'form': form,
+                    'error': error
+                }
+                return render(request, 'dashboard/question/create-exam.html', context)
+        else:
+            context = {
+                'form': form
+            }
+            return render(request, 'dashboard/question/create-exam.html', context)
+    except:
+        return render(request, 'dashboard/question/create-exam.html', context)

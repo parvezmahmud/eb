@@ -88,3 +88,17 @@ class UserAnswer(models.Model):
         elif self.selected_option == self.question.option4 and self.question.option4_is_correct:
             return True
         return False
+    
+class BUNITSCORESHEET(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    exam = models.ForeignKey(EXAM_BATCH_BUNIT, on_delete=models.CASCADE)
+    score = models.DecimalField(default=0, decimal_places=2, max_digits=4)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+class CUNITSCORESHEET(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    exam = models.ForeignKey(EXAM_BATCH_CUNIT, on_delete=models.CASCADE)
+    score = models.DecimalField(default=0, decimal_places=2, max_digits=4)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, blank=True, null=True)

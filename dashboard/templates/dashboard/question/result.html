@@ -1,0 +1,54 @@
+{% extends "student/base.html" %}
+{% block body %}
+<div class="max-w-4xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md mt-10 md:mt-10">
+    <h1 class="text-3xl font-bold mb-6 text-center">{{ exam.title }}</h1>
+    <p class="text-3xl mb-6 text-center">Your score: <span class="font-semibold text-green-600">{{ final_score }}</span></p>
+    <div class="flex justify-right items-right p-10 border-b gap-4 text-zinc-950">
+        <div class="mx-2">
+            <p>Total Questions:</p>
+            <p>Answered: </p>
+            <p class="text-green-500">Correct:</p>
+            <p class="text-red-500">Wrong:</p>
+        </div>
+        <div class="mx-2">
+            <p>{{ user_answers|length }}</p>
+            <p>{{ selected }}</p>
+            <p class="text-green-500">{{ score }}</p>
+            <p class="text-red-500">{{ wrong }}</p>
+        </div>
+        
+    </div>
+    <ul class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for user_answer in user_answers %}
+        <li class="p-6 bg-white shadow-lg rounded-lg flex flex-col justify-between" style="min-height: 200px;">
+            <div>
+                <p class="font-semibold text-lg mb-2">{{forloop.counter}}. {{ user_answer.question.question_text }}</p>
+                <p class="mb-2">Your answer: <span class="{% if user_answer.is_correct %}text-green-500{% else %}text-red-500{% endif %}">{{ user_answer.selected_option }}</span> 
+                {% if user_answer.is_correct %}(Correct){% else %}(Incorrect){% endif %}</p>
+                {% if user_answer.question.description is not None %}
+                    <p class="text-slate-500 text-xs p-0.5">{{ user_answer.question.description}}</p>
+                {% else %}
+                {% endif %}
+            </div>
+            {% if not user_answer.is_correct %}
+            <div>
+                <p>Correct answer: 
+                    <span class="text-green-500">
+                    {% if user_answer.question.option1_is_correct %}{{ user_answer.question.option1 }}{% endif %}
+                    {% if user_answer.question.option2_is_correct %}{{ user_answer.question.option2 }}{% endif %}
+                    {% if user_answer.question.option3_is_correct %}{{ user_answer.question.option3 }}{% endif %}
+                    {% if user_answer.question.option4_is_correct %}{{ user_answer.question.option4 }}{% endif %}
+                    </span>
+                </p>
+            </div>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="p-4">
+        <a href="{% url 'students-home' %}">
+            <button class="bg-green-500 text-white py-3 px-6 rounded hover:bg-green-600 transition duration-300">Go Back to Home</button>
+        </a>
+    </div>
+</div>
+{% endblock %}
