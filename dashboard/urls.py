@@ -21,5 +21,7 @@ urlpatterns = [
     path('dashboard/students/pending/<str:id>/', views.exam_batch_approve, name='exam-batch-students-allow'),
     path('dashboard/students/delete/<str:id>/', views.exam_batch_delete, name='exam-batch-students-delete'),
     path('dashboard/b-unit/create-card', views.create_card_bunit, name='create-card-bunit'),
+    path('dashboard/b-unit/<str:id>/edit-card', views.edit_card_bunit, name='edit-card-bunit'),
     path('dashboard/c-unit/create-card', views.create_card_cunit, name='create-card-cunit'),
+    path('dashboard/c-unit/<str:id>/edit-card', views.edit_card_cunit, name='edit-card-cunit'),
 ]

@@ -1,0 +1,20 @@
+{% extends "dashboard/base.html" %}
+{% block body %}
+    <div class="p-10 flex justify-center items-center">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ field.errors }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        <button class="m-5 p-3 rounded bg-green-500" type="submit">Update</button>
+            <button onclick="window.history.back()" class='p-3 rounded bg-red-600'>Cancel</button>
+        </form>
+        
+    </div>
+{% endblock body %}

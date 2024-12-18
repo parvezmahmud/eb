@@ -33,7 +33,7 @@
                                                 Class Name
                                             </th>
                                             <th scope="col" class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Topic
+                                                Created
                                             </th>
                                             <th scope="col" class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Edit
@@ -50,13 +50,13 @@
                                                     Card No - {{ forloop.revcounter }}
                                                 </td>
                                                 <td class="px-6 py-4 text-sm text-gray-500">
-                                                    {{ card.class_name }}
+                                                    {{ card.title }}
                                                 </td>
                                                 <td class="px-6 py-4 text-sm text-gray-500">
-                                                    {{ card.topic }}
+                                                    {{ card.created }}
                                                 </td>
                                                 <td class="px-6 py-4 text-sm text-green-500">
-                                                    <a href="#">Edit</a>
+                                                    <a href="{% url edit_card card.id %}">Edit</a>
                                                 </td>
                                                 <td class="px-6 py-4 text-sm text-red-500">
                                                     <form action="#" method="post">

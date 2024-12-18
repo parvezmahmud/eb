@@ -113,7 +113,7 @@ def student_info(request):
     return render(request, 'student/student-info.html', {'form': form})
 
 
-@login_required(login_url='/login')
+@login_required(login_url='/login/')
 @user_field_required('is_approved')
 def student_profile(request):
     user = get_object_or_404(STUDENTINFO, user=request.user)
@@ -131,6 +131,9 @@ def student_profile(request):
     }
     return render(request, 'student/profile.html', context)
 
+
+@login_required(login_url='/login')
+@user_field_required('is_approved')
 def student_bunit(request):
     data = EXAM_BATCH_CARDS_BUNIT.objects.all()
     context = {
@@ -138,6 +141,8 @@ def student_bunit(request):
     }
     return render(request, 'student/unit.html', context)
 
+@login_required(login_url='/login')
+@user_field_required('is_approved')
 def student_cunit(request):
     data = EXAM_BATCH_CARDS_CUNIT.objects.all()
     context = {

@@ -1,16 +1,30 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from dashboard.models import EXAM_BATCH_BUNIT, EXAM_BATCH_CARDS_BUNIT,Question, EXAM_BATCH_CUNIT, EXAM_BATCH_CARDS_CUNIT, UserAnswer, BUNITSCORESHEET, CUNITSCORESHEET
-from .forms import CARD_FORM, CREATE_TEST, QuestionForm, AnswerForm
+from .forms import CARD_FORM, CREATE_TEST, QuestionForm, AnswerForm, EDIT_CARD_BUNIT, EDIT_CARD_CUNIT
 from django.forms import formset_factory, modelformset_factory
 import uuid
 from django import forms
 from django.db import transaction
 from student.models import STUDENTINFO
+from django.contrib.auth.decorators import login_required
+from functools import wraps
+
+def user_field_required(field_name, redirect_url='/not-authorized/'):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            # Assuming Student is linked to the User model via OneToOneField
+            user_info = getattr(request.user, 'studentinfo', None)
+            if not request.user.is_authenticated or not user_info or not getattr(user_info, field_name, False):
+                return redirect(redirect_url)
+            return view_func(request, *args, **kwargs)
+        return _wrapped_view
+    return decorator
 
 
 
-# @user_passes_test(lambda u: u.is_superuser)
+
 def home(request):
     if request.user.is_superuser:
         return redirect('dashboard-home')
@@ -24,38 +38,45 @@ def dashboard_home(request):
     }
     return render(request, 'dashboard/dashboard_home.html', context)
 
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def bunit(request):
     cards = EXAM_BATCH_CARDS_BUNIT.objects.all().order_by('-created')
     exams = EXAM_BATCH_BUNIT.objects.all().order_by('-created')
     create_card = 'create-card-bunit'
     create_question = 'create-exam-bunit'
     edit_question = 'edit-test-bunit'
+    edit_card = 'edit-card-bunit'
     context = {
         'exams': exams,
         'cards': cards,
         'create_card': create_card,
         'create_question': create_question,
         'topic': 'B-UNIT',
-        'edit_test': edit_question
+        'edit_test': edit_question,
+        'edit_card': edit_card,
     }
     return render(request, 'dashboard/unit.html', context)
 
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def cunit(request):
     cards = EXAM_BATCH_CARDS_CUNIT.objects.all().order_by('-created')
     exams = EXAM_BATCH_CUNIT.objects.all().order_by('-created')
     create_card = 'create-card-cunit'
     create_question = 'create-exam-cunit'
     edit_question = 'edit-test-cunit'
+    edit_card = 'edit-card-cunit'
     context = {
         'exams': exams,
         'cards': cards,
         'create_card': create_card,
         'create_question': create_question,
         'topic': 'C-UNIT',
-        'edit_test': edit_question
+        'edit_test': edit_question,
+        'edit_card': edit_card,
     }
     return render(request, 'dashboard/unit.html', context)
 
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def create_exam_bunit(request):
     if request.method == 'POST':
         select_form = CREATE_TEST(request.POST)
@@ -83,7 +104,10 @@ def create_exam_bunit(request):
         select_form = CREATE_TEST()
         return render(request, 'dashboard/question/create-exam.html', {'form': select_form})
 
+
+
 #Create Question for B UNIT    
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def create_questions_bunit(request):
     # Retrieve session data with fallback values
     title = str(request.session.get('title', ''))
@@ -135,7 +159,10 @@ def create_questions_bunit(request):
     return render(request, 'dashboard/question/create-question.html', context)
 
 
+
+
 #Create Exam For C UNIT
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def create_exam_cunit(request):
     if request.method == 'POST':
         select_form = CREATE_TEST(request.POST)
@@ -165,6 +192,7 @@ def create_exam_cunit(request):
 
 
 #Create Exam For C UNIT
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def create_questions_cunit(request):
     # Retrieve session data with fallback values
     title = str(request.session.get('title', ''))
@@ -215,6 +243,8 @@ def create_questions_cunit(request):
     }
     return render(request, 'dashboard/question/create-question.html', context)
 
+@login_required(login_url='/login')
+@user_field_required('is_approved')
 def ind_exam(request, id):
     try:
         data = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
@@ -230,7 +260,8 @@ def ind_exam(request, id):
         return render(request, 'dashboard/question/ind.html', context)
     
 
-
+@login_required(login_url='/login')
+@user_field_required('is_approved')
 def take_exam(request, id):
     try:
         exam = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
@@ -277,6 +308,8 @@ def take_exam(request, id):
     return render(request, 'dashboard/question/take-exam.html', {'exam': exam, 'formset': formset, 'exam_duration': exam.time })
 
 
+@login_required(login_url='/login')
+@user_field_required('is_approved')
 def result(request, id):
         
         try:
@@ -352,7 +385,7 @@ def result(request, id):
         
 
 
-
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def edit_test_and_questions(request, id):
     try:
         test = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
@@ -424,7 +457,7 @@ def edit_test_and_questions(request, id):
 
     return render(request, 'dashboard/question/edit-test.html', context)
 
-
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def delete_question(request, id):
     if request.method == 'POST':
         try:
@@ -438,7 +471,7 @@ def delete_question(request, id):
     else:
         return redirect('dashboard-home')
     
-
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def students_home(request):
     choices = ['APPROVED', 'PENDING', 'ARCHIVE']
     redirect_links = ['students-approved', 'students-pending', 'students-archive']
@@ -447,7 +480,7 @@ def students_home(request):
     }
     return render(request, 'dashboard/dashboard_home.html', context)
 
-
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def students_approved(request):
     data = STUDENTINFO.objects.filter(is_approved=True).filter(cancelled=False)
     context = {
@@ -455,6 +488,8 @@ def students_approved(request):
     }
     return render(request, 'dashboard/student.html', context)  
 
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def students_unapproved(request):
     data = STUDENTINFO.objects.filter(is_approved=False).filter(cancelled=False)
     context = {
@@ -462,6 +497,7 @@ def students_unapproved(request):
     }
     return render(request, 'dashboard/student.html', context)
 
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def students_cancelled(request):
     data = STUDENTINFO.objects.filter(is_approved=False).filter(cancelled=True)
     context = {
@@ -469,6 +505,8 @@ def students_cancelled(request):
     }
     return render(request, 'dashboard/student.html', context)
 
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def exam_batch_approve(request, id):
     try:
         student = get_object_or_404(STUDENTINFO, id=id)
@@ -478,7 +516,9 @@ def exam_batch_approve(request, id):
         return redirect(request.META.get('HTTP_REFERER'))
     except:
         return redirect('students-pending')
-    
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def exam_batch_delete(request, id):
     try:
         student = get_object_or_404(STUDENTINFO, id=id)
@@ -489,7 +529,7 @@ def exam_batch_delete(request, id):
     except:
         return redirect(request.META.get('HTTP_REFERER'))
     
-
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def create_card_bunit(request):
     try:
         form = CARD_FORM()
@@ -516,7 +556,9 @@ def create_card_bunit(request):
             return render(request, 'dashboard/question/create-exam.html', context)
     except:
         return render(request, 'dashboard/question/create-exam.html', context)
-    
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def create_card_cunit(request):
     try:
         form = CARD_FORM()
@@ -543,3 +585,46 @@ def create_card_cunit(request):
             return render(request, 'dashboard/question/create-exam.html', context)
     except:
         return render(request, 'dashboard/question/create-exam.html', context)
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')    
+def edit_card_bunit(request, id):
+    item = get_object_or_404(EXAM_BATCH_CARDS_BUNIT, id=id)
+    if request.method == 'GET':
+        context = {
+            'item': item,
+            'form': EDIT_CARD_BUNIT(instance=item)
+        }
+        return render(request, 'dashboard/question/edit-card.html', context)
+    else:
+        posted_item = EDIT_CARD_BUNIT(request.POST, instance=item)
+        posted_item.save()
+        return redirect('b-unit-home')
+    
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
+def edit_card_cunit(request, id):
+    item = get_object_or_404(EXAM_BATCH_CARDS_CUNIT, id=id)
+    if request.method == 'GET':
+        context = {
+            'item': item,
+            'form': EDIT_CARD_CUNIT(instance=item)
+        }
+        return render(request, 'dashboard/question/edit-card.html', context)
+    else:
+        posted_item = EDIT_CARD_CUNIT(request.POST, instance=item)
+        posted_item.save()
+        return redirect('c-unit-home')
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')  
+def delete_card(request, id):
+    try:
+        item = get_object_or_404(EXAM_BATCH_CARDS_BUNIT, id=id)
+        if request.method == 'POST':
+            item.delete()
+            return redirect('b-unit-home')
+    except:
+        item = get_object_or_404(EXAM_BATCH_CARDS_CUNIT, id=id)
+        if request.method == 'POST':
+            item.delete()
+            return redirect('c-unit-home')

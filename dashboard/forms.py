@@ -1,5 +1,5 @@
 from django import forms
-from .models import Question, UserAnswer
+from .models import Question, UserAnswer, EXAM_BATCH_CARDS_BUNIT, EXAM_BATCH_CARDS_CUNIT
 
 class CREATE_TEST(forms.Form):
     title = forms.CharField(label="Name of the Exam", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
@@ -76,6 +76,24 @@ class CARD_FORM(forms.Form):
     title = forms.CharField(label="Class Name", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
     drive_link = forms.CharField(label="PDF File Link", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
     take_exam = forms.CharField(label="Exam Link", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
+
+class EDIT_CARD_BUNIT(forms.ModelForm):
+    class Meta:
+        model = EXAM_BATCH_CARDS_BUNIT
+        fields = [
+            'title',
+            'drive_link',
+            'take_exam',
+        ]
+
+class EDIT_CARD_CUNIT(forms.ModelForm):
+    class Meta:
+        model = EXAM_BATCH_CARDS_CUNIT
+        fields = [
+            'title',
+            'drive_link',
+            'take_exam',
+        ]
 
 
 class AnswerForm(forms.ModelForm):
