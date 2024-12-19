@@ -244,7 +244,6 @@ def create_questions_cunit(request):
     return render(request, 'dashboard/question/create-question.html', context)
 
 @login_required(login_url='/login')
-@user_field_required('is_approved')
 def ind_exam(request, id):
     try:
         data = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
