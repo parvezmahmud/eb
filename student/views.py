@@ -129,10 +129,9 @@ def student_profile(request):
     except:
         cunit_exams = []
     context = {
-        'user': student,
+        'student': student,
         'bunit': bunit_exams,
-        'cunit': cunit_exams
-    }
+        'cunit': cunit_exams,    }
     return render(request, 'student/profile.html', context)
 
 
