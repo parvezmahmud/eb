@@ -1,67 +1,76 @@
-{% extends "student/base.html" %}
+{% extends 'student/base.html' %}
+
 {% block body %}
-<div class="profile-card p-6 shadow-md rounded-md bg-white flex flex-col sm:flex-row justify-between items-center">
-    <div class="text-center sm:text-left">
-      <p class="mb-1"><strong>Name:</strong>{{ user.name }}</p>
-      <p class="mb-1"><strong>College:</strong>{{ user.college }}</p>
-      <p class="mb-1"><strong>Phone:</strong>{{ user.phone }}</p>
-      <p><strong>Rank:</strong></p>
-    </div>
-    <button class="edit-btn bg-blue-500 text-white px-4 py-2 rounded mt-4 sm:mt-0 sm:ml-4">
-      Edit
-    </button>
-  </div>
-  
-  <div class="tests-table mt-6 p-4 shadow-md rounded-md bg-white">
-    <h2 class="text-xl font-bold mb-4">Tests</h2>
-    <!-- Responsive Table for Larger Screens -->
-    <div class="hidden md:block">
-      <table class="w-full border-collapse border border-gray-200">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="border border-gray-300 p-2 text-left">Test Name</th>
-            <th class="border border-gray-300 p-2 text-left">Test Taken</th>
-            <th class="border border-gray-300 p-2 text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for exam in exams %}
-          <tr>
-            <td class="border border-gray-300 p-2">{{ exam.exam.title }}</td>
-            <td class="border border-gray-300 p-2">{{ exam.created }}</td>
-            <td class="border border-gray-300 p-2 text-center">
-                <a href="{% url 'take-exam' exam.exam.id %}">
-              <button class="take-btn bg-blue-500 text-white px-4 py-2 rounded ml-2">Take Exam</button>
-            </a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  
-    <!-- Cards for Smaller Screens -->
-    <div class="block md:hidden space-y-4">
-      <!-- Single Test Card -->
-      <div class="test-card p-4 border border-gray-200 rounded-md shadow-sm">
-        <p><strong>Test Name:</strong> Math Test</p>
-        <p><strong>Test Date:</strong> 2024-12-20</p>
-        <div class="mt-2 flex justify-start space-x-2">
-          <button class="view-btn bg-green-500 text-white px-4 py-2 rounded">View</button>
-          <button class="take-btn bg-blue-500 text-white px-4 py-2 rounded">Take Exam</button>
+<div class="min-h-screen bg-blue-50 flex flex-col items-center py-10">
+    <!-- Top Section -->
+    <div class="bg-white shadow-md rounded-lg p-6 w-full max-w-3xl mb-8">
+        <div class="flex justify-between items-center border-b pb-4 mb-4">
+            <div>
+                <h1 class="text-2xl font-semibold text-blue-600">{{ user.name }}</h1>
+                <p class="text-gray-500">College: {{ user.college }}</p>
+                <p class="text-gray-500">Email: {{ user.email }}</p>
+                <p class="text-gray-500">Phone: {{ user.phone }}</p>
+                <p class="text-gray-500">Rank: {{ user.rank }}</p>
+            </div>
+            {% comment %} <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Update Profile
+            </button> {% endcomment %}
         </div>
-      </div>
-      <div class="test-card p-4 border border-gray-200 rounded-md shadow-sm">
-        <p><strong>Test Name:</strong> Physics Test</p>
-        <p><strong>Test Date:</strong> 2024-12-25</p>
-        <div class="mt-2 flex justify-start space-x-2">
-          <button class="view-btn bg-green-500 text-white px-4 py-2 rounded">View</button>
-          <button class="take-btn bg-blue-500 text-white px-4 py-2 rounded">Take Exam</button>
-        </div>
-      </div>
     </div>
-  </div>
-  
-  
-  
-{% endblock body %}
+
+    <!-- Second Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl">
+        <!-- Table 1 -->
+        <div class="bg-white shadow-md rounded-lg p-6 overflow-auto" style="max-height: 400px;">
+            <h2 class="text-xl font-semibold text-blue-600 mb-4">B UNIT</h2>
+            <table class="min-w-full table-fixed border-collapse">
+                <thead>
+                    <tr class="bg-blue-100 text-blue-600">
+                        <th class="p-2 border text-left">Test</th>
+                        <th class="p-2 border text-left">Score</th>
+                        <th class="p-2 border text-left">Taken</th>
+                        <th class="p-2 border text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   {% for test in bunit %}
+                    <tr class="hover:bg-blue-50">
+                        <td class="p-2 border">{{ test.exam.title  }}</td>
+                        <td class="p-2 border">{{ test.score }}</td>
+                        <td class="p-2 border">{{ test.created }}</td>
+                        <td class="p-2 border text-green-600 "> <a href="{% url 'take-exam' test.exam.id %}">Try Again</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table 2 -->
+        <div class="bg-white shadow-md rounded-lg p-6 overflow-auto" style="max-height: 400px;">
+            <h2 class="text-xl font-semibold text-blue-600 mb-4">Table 2</h2>
+            <table class="min-w-full table-fixed border-collapse">
+                <thead>
+                    <tr class="bg-blue-100 text-blue-600">
+                        <th class="p-2 border text-left">Test</th>
+                        <th class="p-2 border text-left">Score</th>
+                        <th class="p-2 border text-left">Taken</th>
+                        <th class="p-2 border text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                  {% for test in cunit %}
+                  <tr class="hover:bg-blue-50">
+                      <td class="p-2 border">{{ test.exam.title  }}</td>
+                      <td class="p-2 border">{{ test.score }}</td>
+                      <td class="p-2 border">{{ test.created }}</td>
+                      <td class="p-2 border text-green-600 "> <a href="{% url 'take-exam' test.exam.id %}">Try Again</a></td>
+                  </tr>
+                  {% endfor %}
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -119,7 +119,7 @@ def student_info(request):
 @login_required(login_url='/login/')
 @user_field_required('is_approved')
 def student_profile(request):
-    user = get_object_or_404(STUDENTINFO, user=request.user)
+    student = get_object_or_404(STUDENTINFO, user=request.user)
     try:
         bunit_exams = get_list_or_404(BUNITSCORESHEET, user=request.user)
     except:
@@ -129,8 +129,9 @@ def student_profile(request):
     except:
         cunit_exams = []
     context = {
-        'user': user,
-        'exams': bunit_exams + cunit_exams
+        'user': student,
+        'bunit': bunit_exams,
+        'cunit': cunit_exams
     }
     return render(request, 'student/profile.html', context)
 
