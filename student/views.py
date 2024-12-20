@@ -131,7 +131,8 @@ def student_profile(request):
     context = {
         'student': student,
         'bunit': bunit_exams,
-        'cunit': cunit_exams,    }
+        'cunit': cunit_exams,    
+        }
     return render(request, 'student/profile.html', context)
 
 

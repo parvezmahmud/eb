@@ -9,6 +9,7 @@ from django.db import transaction
 from student.models import STUDENTINFO
 from django.contrib.auth.decorators import login_required
 from functools import wraps
+from django.core.cache import cache
 
 def user_field_required(field_name, redirect_url='/not-authorized/'):
     def decorator(view_func):
@@ -638,3 +639,48 @@ def delete_card_cunit(request, id):
             return redirect('c-unit-home')
     except:
         return redirect('c-unit-home')
+    
+
+# def bunit_per_exam_leaderboard(request, id):
+#     try:
+#         test = get_object_or_404(EXAM_BATCH_BUNIT, id=id)
+        
+#         scores = BUNITSCORESHEET.objects.filter(exam=test).order_by('-score')
+#         print('okay')
+#         scoresheet = [
+#             {'key':index, 'score':score}
+#                 for index, score in enumerate(scores)
+#         ]
+#         cache.set('scoresheet', scoresheet, timeout=3600)
+#         context = {
+#             'leaderboard_data': scoresheet
+#         }
+#         return render(request, 'dashboard/question/leader-board.html',context)
+#     except:
+#         return redirect('students-home')
+
+
+# from django.shortcuts import render
+
+# def view_scores_with_student_info(request, exam_id):
+#     # Fetch all score sheets for the given exam
+#     scoresheets = BUNITSCORESHEET.objects.filter(exam_id=exam_id).select_related('user')
+
+#     # Collect data along with student info
+#     data = []
+#     for scoresheet in scoresheets:
+#         student_info = None
+#         if scoresheet.user:
+#             try:
+#                 student_info = scoresheet.user.studentinfo  # Access STUDENTINFO via User
+#             except STUDENTINFO.DoesNotExist:
+#                 student_info = None
+
+#         data.append({
+#             'score': scoresheet.score,
+#             'user': scoresheet.user,
+#             'student_info': student_info,
+#         })
+
+#     return render(request, 'scores_with_student_info.html', {'data': data})
+

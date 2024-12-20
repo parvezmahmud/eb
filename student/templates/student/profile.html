@@ -27,8 +27,7 @@
                         <th class="p-2 border text-left">Test</th>
                         <th class="p-2 border text-left">Score</th>
                         <th class="p-2 border text-left">Taken</th>
-                        <th class="p-2 border text-left">Actions</th>
-                    </tr>
+                        <th class="p-2 border text-left">Take Exam</th>                    </tr>
                 </thead>
                 <tbody>
                    {% for test in bunit %}
@@ -36,8 +35,7 @@
                         <td class="p-2 border">{{ test.exam.title  }}</td>
                         <td class="p-2 border">{{ test.score }}</td>
                         <td class="p-2 border">{{ test.created }}</td>
-                        <td class="p-2 border text-green-600 "> <a href="{% url 'take-exam' test.exam.id %}">Try Again</a></td>
-                    </tr>
+                        <td class="p-2 border text-green-600 "> <a href="{% url 'take-exam' test.exam.id %}">Try Again</a></td>                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -45,7 +43,7 @@
 
         <!-- Table 2 -->
         <div class="bg-white shadow-md rounded-lg p-6 overflow-auto" style="max-height: 400px;">
-            <h2 class="text-xl font-semibold text-blue-600 mb-4">Table 2</h2>
+            <h2 class="text-xl font-semibold text-blue-600 mb-4">C UNIT</h2>
             <table class="min-w-full table-fixed border-collapse">
                 <thead>
                     <tr class="bg-blue-100 text-blue-600">

@@ -14,6 +14,7 @@ urlpatterns = [
     path('exam/<str:id>/result', views.result, name='exam-result'),
     path('exam/<str:id>/edit', views.edit_test_and_questions, name="edit-test"),
     path('exam/<str:id>/delete', views.delete_question, name='delete-test'),
+    # path('exam/<str:id>/leader-board', views.bunit_per_exam_leaderboard, name='bunit-per-exam-leaderboard'),
     path('dashboard/students', views.students_home, name='dashboard-students-home'),
     path('dashboard/students/pending', views.students_unapproved, name='students-pending'),
     path('dashboard/students/approved', views.students_approved, name='students-approved'),

@@ -1,7 +1,7 @@
 {% extends "dashboard/base.html" %}
 {% block body %}
 <div class="p-24">
-    <div class="flex justify-center items-center">
+    <div class="grid grid-cols-1 md:flex justify-center items-center">
         {% for unit, link in units %}
         <div class="m-5 h-96 w-96 box-border rounded bg-gray-50 shadow-md">
             <a class="" href="{% url link %}">
