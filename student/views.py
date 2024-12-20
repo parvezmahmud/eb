@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from dashboard.models import BUNITSCORESHEET, CUNITSCORESHEET,EXAM_BATCH_CARDS_BUNIT, EXAM_BATCH_CARDS_CUNIT
 from .models import STUDENTINFO
 
+from student.decorators import redirect_if_logged_in
+
 
 def user_field_required(field_name, redirect_url='/not-authorized/'):
     def decorator(view_func):
@@ -20,6 +22,7 @@ def user_field_required(field_name, redirect_url='/not-authorized/'):
         return _wrapped_view
     return decorator
 
+
 # Create your views here.
 def students_home(request):
     if request.user.is_superuser:
@@ -29,7 +32,7 @@ def students_home(request):
 def unauthorized(request):
     return render(request, 'student/unauthorized.html')
 
-
+@redirect_if_logged_in
 def signup_user(request):
     form = SignUpForm()
     if request.method == 'POST':
@@ -200,3 +203,17 @@ def leaderboard_cunit(request):
             "leaderboard_data": leaderboard_data
         }
         return render(request, 'dashboard/question/leader-board.html', context)
+    
+def test_page(request):
+    user = {
+        'name':'Sanzida Pervin',
+        'college':'cola',
+        'email':'ahajd',
+        'phone':'0982728',
+        'rank':'6',
+    }
+
+    context = {
+        'user': user
+    }
+    return render(request, 'student/profile-test.html', context)

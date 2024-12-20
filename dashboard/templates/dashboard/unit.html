@@ -59,7 +59,7 @@
                                                     <a href="{% url edit_card card.id %}">Edit</a>
                                                 </td>
                                                 <td class="px-6 py-4 text-sm text-red-500">
-                                                    <form action="#" method="post">
+                                                    <form action="{% url dlt_card card.id %}" method="post">
                                                         {% csrf_token %}
                                                         <button type="submit">Delete</button>
                                                     </form>

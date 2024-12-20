@@ -46,6 +46,7 @@ def bunit(request):
     create_question = 'create-exam-bunit'
     edit_question = 'edit-test-bunit'
     edit_card = 'edit-card-bunit'
+    delete_card = 'delete-card-bunit'
     context = {
         'exams': exams,
         'cards': cards,
@@ -54,6 +55,7 @@ def bunit(request):
         'topic': 'B-UNIT',
         'edit_test': edit_question,
         'edit_card': edit_card,
+        'dlt_card': delete_card,
     }
     return render(request, 'dashboard/unit.html', context)
 
@@ -65,6 +67,7 @@ def cunit(request):
     create_question = 'create-exam-cunit'
     edit_question = 'edit-test-cunit'
     edit_card = 'edit-card-cunit'
+    delete_card = 'delete-card-cunit'
     context = {
         'exams': exams,
         'cards': cards,
@@ -73,6 +76,7 @@ def cunit(request):
         'topic': 'C-UNIT',
         'edit_test': edit_question,
         'edit_card': edit_card,
+        'dlt_card': delete_card,
     }
     return render(request, 'dashboard/unit.html', context)
 
@@ -616,14 +620,21 @@ def edit_card_cunit(request, id):
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')  
-def delete_card(request, id):
+def delete_card_bunit(request, id):
     try:
         item = get_object_or_404(EXAM_BATCH_CARDS_BUNIT, id=id)
         if request.method == 'POST':
             item.delete()
             return redirect('b-unit-home')
     except:
+        return redirect('b-unit-home')
+    
+@user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')  
+def delete_card_cunit(request, id):
+    try:
         item = get_object_or_404(EXAM_BATCH_CARDS_CUNIT, id=id)
         if request.method == 'POST':
             item.delete()
             return redirect('c-unit-home')
+    except:
+        return redirect('c-unit-home')

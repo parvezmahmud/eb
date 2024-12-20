@@ -1,20 +1,74 @@
-{% extends "student/base.html" %}
+{% extends 'student/base.html' %}
+
 {% block body %}
-<div class="bg-gray-50 flex items-center justify-center min-h-screen">
-
-    <div class="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
-        <!-- Title -->
-        <h1 class="text-3xl font-semibold text-gray-800 mb-4">
-            Exam Batch Update
-        </h1>
-
-        <!-- Subtitle -->
-        <p class="text-sm text-gray-600 mb-6 leading-relaxed">
-            Dear <b>{{user.name}}</b>, exam batch will start soon. Stay tuned for updates and announcements. Thank you for your patience and support.
-        </p>
+<div class="min-h-screen bg-blue-50 flex flex-col items-center py-10">
+    <!-- Top Section -->
+    <div class="bg-white shadow-md rounded-lg p-6 w-full max-w-3xl mb-8">
+        <div class="flex justify-between items-center border-b pb-4 mb-4">
+            <div>
+                <h1 class="text-2xl font-semibold text-blue-600">{{ user.name }}</h1>
+                <p class="text-gray-500">College: {{ user.college }}</p>
+                <p class="text-gray-500">Email: {{ user.email }}</p>
+                <p class="text-gray-500">Phone: {{ user.phone }}</p>
+                <p class="text-gray-500">Rank: {{ user.rank }}</p>
+            </div>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Update Profile
+            </button>
+        </div>
     </div>
 
+    <!-- Second Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl">
+        <!-- Table 1 -->
+        <div class="bg-white shadow-md rounded-lg p-6 overflow-auto" style="max-height: 400px;">
+            <h2 class="text-xl font-semibold text-blue-600 mb-4">B UNIT</h2>
+            <table class="min-w-full table-fixed border-collapse">
+                <thead>
+                    <tr class="bg-blue-100 text-blue-600">
+                        <th class="p-2 border text-left">Test</th>
+                        <th class="p-2 border text-left">Score</th>
+                        <th class="p-2 border text-left">Taken</th>
+                        <th class="p-2 border text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                    <tr class="hover:bg-blue-50">
+                        <td class="p-2 border"> row.col1</td>
+                        <td class="p-2 border"> row.col2</td>
+                        <td class="p-2 border"> row.col3</td>
+                        <td class="p-2 border"> row.col4</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table 2 -->
+        <div class="bg-white shadow-md rounded-lg p-6 overflow-auto" style="max-height: 400px;">
+            <h2 class="text-xl font-semibold text-blue-600 mb-4">Table 2</h2>
+            <table class="min-w-full table-fixed border-collapse">
+                <thead>
+                    <tr class="bg-blue-100 text-blue-600">
+                        <th class="p-2 border text-left">Column 1</th>
+                        <th class="p-2 border text-left">Column 2</th>
+                        <th class="p-2 border text-left">Column 3</th>
+                        <th class="p-2 border text-left">Column 4</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr class="hover:bg-blue-50">
+                        <td class="p-2 border"> row.col1</td>
+                        <td class="p-2 border"> row.col2</td>
+                        <td class="p-2 border"> row.col3</td>
+                        <td class="p-2 border"> row.col4</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
-
-{% endblock body %}
+{% endblock %}
