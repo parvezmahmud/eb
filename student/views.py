@@ -166,10 +166,12 @@ def leaderboard_bunit(request):
             user_scores = BUNITSCORESHEET.objects.filter(user=user)
             total_score = sum(score.score for score in user_scores)
             user_info = STUDENTINFO.objects.get(user=user)
+            exam_taken = BUNITSCORESHEET.objects.filter(user=user).count()
             leaderboard_data.append({
                 'user': user,
                 'score': total_score,
                 'info': user_info,
+                'exam_taken': exam_taken,
             })
 
         # Sort the leaderboard data by total_score in descending order
@@ -191,10 +193,12 @@ def leaderboard_cunit(request):
             user_scores = CUNITSCORESHEET.objects.filter(user=user)
             total_score = sum(score.score for score in user_scores)
             user_info = STUDENTINFO.objects.get(user=user)
+            exam_taken = CUNITSCORESHEET.objects.filter(user=user).count()
             leaderboard_data.append({
                 'user': user,
                 'score': total_score,
                 'info': user_info,
+                'exam_taken': exam_taken,
             })
 
         # Sort the leaderboard data by total_score in descending order
