@@ -74,9 +74,23 @@ class QuestionForm(forms.ModelForm):
 
 class CARD_FORM(forms.Form):
     title = forms.CharField(label="Class Name", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
-    drive_link = forms.CharField(label="PDF File Link", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
-    take_exam = forms.CharField(label="Exam Link", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}))
+    drive_link = forms.CharField(label="PDF File Link", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}), required=False)
+    take_exam = forms.CharField(label="Exam Link", widget=forms.TextInput(attrs={'class': 'w-full p-2 border border-gray-300 rounded'}), required=False)
 
+    def clean_drive(self):
+        data = self.cleaned_data('drive_link')
+        return data if data.strip() else None
+    def clean_exam(self):
+        data = self.cleaned_data('take_exam')
+        return data if data.strip() else None
+    def clean(self):
+        cleaned_data = super().clean()
+        for field in ['drive_link', 'take_exam']:
+            if not cleaned_data.get(field):  # Use `.get()` or `[]` to access dictionary values
+                cleaned_data[field] = None
+        return cleaned_data
+
+ 
 class EDIT_CARD_BUNIT(forms.ModelForm):
     class Meta:
         model = EXAM_BATCH_CARDS_BUNIT

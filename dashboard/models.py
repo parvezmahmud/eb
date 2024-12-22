@@ -35,10 +35,10 @@ class EXAM_BATCH_BUNIT(models.Model):
 
 class EXAM_BATCH_CARDS_BUNIT(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, blank=True, null= True)
     unit = models.CharField(max_length=255, default='B-UNIT')
-    drive_link = models.CharField(max_length=255)
-    take_exam = models.CharField(max_length=255)
+    drive_link = models.CharField(max_length=255, blank=True, null= True)
+    take_exam = models.CharField(max_length=255, blank=True, null= True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -63,10 +63,10 @@ class EXAM_BATCH_CUNIT(models.Model):
 
 class EXAM_BATCH_CARDS_CUNIT(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, blank=True, null= True)
     unit = models.CharField(max_length=255, default='C-UNIT')
-    drive_link = models.CharField(max_length=255)
-    take_exam = models.CharField(max_length=255)
+    drive_link = models.CharField(max_length=255, blank=True, null= True)
+    take_exam = models.CharField(max_length=255, blank=True, null= True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

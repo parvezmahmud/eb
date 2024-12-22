@@ -536,59 +536,51 @@ def exam_batch_delete(request, id):
 @user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def create_card_bunit(request):
     try:
-        form = CARD_FORM()
         if request.method == 'POST':
-            posted_card = CARD_FORM(request.POST)
-            if posted_card.is_valid():
+            form = CARD_FORM(request.POST)
+            if form.is_valid():
                 EXAM_BATCH_CARDS_BUNIT.objects.create(
-                    title = posted_card.cleaned_data['title'],
-                    take_exam = posted_card.cleaned_data['take_exam'],
-                    drive_link = posted_card.cleaned_data['drive_link']
+                    title=form.cleaned_data['title'],
+                    take_exam=form.cleaned_data['take_exam'],
+                    drive_link=form.cleaned_data['drive_link']
                 )
                 return redirect('b-unit-home')
             else:
-                error = "Invalid Form Input"
-                context = {
-                    'form': form,
-                    'error': error
-                }
-                return render(request, 'dashboard/question/create-exam.html', context)
+                # Form is invalid; display errors
+                
+                return render(request, 'dashboard/question/create-exam.html', {'form': form})
         else:
-            context = {
-                'form': form
-            }
-            return render(request, 'dashboard/question/create-exam.html', context)
-    except:
-        return render(request, 'dashboard/question/create-exam.html', context)
+            # Display empty form
+            
+            form = CARD_FORM()
+            return render(request, 'dashboard/question/create-exam.html', {'form': form})
+    except Exception as e:
+        return render(request, 'dashboard/question/create-exam.html', {'form': form, 'error': str(e)})
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')
 def create_card_cunit(request):
     try:
-        form = CARD_FORM()
         if request.method == 'POST':
-            posted_card = CARD_FORM(request.POST)
-            if posted_card.is_valid():
+            form = CARD_FORM(request.POST)
+            if form.is_valid():
                 EXAM_BATCH_CARDS_CUNIT.objects.create(
-                    title = posted_card.cleaned_data['title'],
-                    take_exam = posted_card.cleaned_data['take_exam'],
-                    drive_link = posted_card.cleaned_data['drive_link']
+                    title=form.cleaned_data['title'],
+                    take_exam=form.cleaned_data['take_exam'],
+                    drive_link=form.cleaned_data['drive_link']
                 )
                 return redirect('c-unit-home')
             else:
-                error = "Invalid Form Input"
-                context = {
-                    'form': form,
-                    'error': error
-                }
-                return render(request, 'dashboard/question/create-exam.html', context)
+                # Form is invalid; display errors
+                
+                return render(request, 'dashboard/question/create-exam.html', {'form': form})
         else:
-            context = {
-                'form': form
-            }
-            return render(request, 'dashboard/question/create-exam.html', context)
-    except:
-        return render(request, 'dashboard/question/create-exam.html', context)
+            # Display empty form
+            
+            form = CARD_FORM()
+            return render(request, 'dashboard/question/create-exam.html', {'form': form})
+    except Exception as e:
+        return render(request, 'dashboard/question/create-exam.html', {'form': form, 'error': str(e)})
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/not-authorized/')    
 def edit_card_bunit(request, id):
